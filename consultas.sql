@@ -34,6 +34,28 @@ SELECT * FROM users WHERE market_id = (SELECT id FROM markets WHERE name = 'Supe
 SELECT name FROM markets WHERE address_id = (SELECT id FROM addresses WHERE street = 'Av. Paulista');
 
 # Trigger
+CREATE OR REPLACE FUNCTION notify_delete()
+RETURNS TRIGGER AS $$
+BEGIN
+    RAISE NOTICE 'Registro com id % foi excluído.', OLD.id;
+    RETURN OLD; -- Retorna o registro excluído
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_notify_delete_users
+AFTER DELETE ON users
+FOR EACH ROW
+EXECUTE FUNCTION notify_delete();
+
+select id from users;
+DELETE FROM users WHERE id = 'abfbeefe-0112-43d8-9e4d-0361d3c43184';
+
+
+SELECT tgname
+FROM pg_trigger
+WHERE tgrelid = 'users'::regclass;
+
+
 
 # View
 
@@ -54,5 +76,6 @@ $$;
 
 CALL update_market_address(  'f0f9baea-17d2-48d5-ac75-fe1a0d9d169f', '7fa5ee83-93a4-4d28-8304-1e82bc39df1f');
 
-
-
+SELECT DISTINCT a.id
+FROM addresses a
+JOIN markets m ON a.id = m.address_id;
