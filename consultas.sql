@@ -31,8 +31,28 @@ VALUES
 # Consultas aninhadas
 SELECT * FROM users WHERE market_id = (SELECT id FROM markets WHERE name = 'Supermercado do Rio');
 
+SELECT name FROM markets WHERE address_id = (SELECT id FROM addresses WHERE street = 'Av. Paulista');
+
 # Trigger
 
 # View
 
 # Procedimentos armazenados
+
+CREATE OR REPLACE PROCEDURE update_market_address(
+    IN p_market_id UUID,
+    IN p_new_address_id UUID
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE markets
+    SET address_id = p_new_address_id
+    WHERE id = p_market_id;
+END;
+$$;
+
+CALL update_market_address(  'f0f9baea-17d2-48d5-ac75-fe1a0d9d169f', '7fa5ee83-93a4-4d28-8304-1e82bc39df1f');
+
+
+
