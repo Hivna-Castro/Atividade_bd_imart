@@ -55,12 +55,27 @@ SELECT tgname
 FROM pg_trigger
 WHERE tgrelid = 'users'::regclass;
 
-
-
 # View
+CREATE OR REPLACE VIEW market_details AS
+SELECT
+    m.id AS market_id,
+    m.name AS market_name,
+    m.cnpj AS market_cnpj,
+    m.cellphone AS market_cellphone,
+    a.street AS address_street,
+    a.city AS address_city,
+    a.state AS address_state,
+    a.zipcode AS address_zip_code
+FROM
+    markets m
+JOIN
+    addresses a ON m.address_id = a.id;
+
+
+SELECT * FROM market_details;
+
 
 # Procedimentos armazenados
-
 CREATE OR REPLACE PROCEDURE update_market_address(
     IN p_market_id UUID,
     IN p_new_address_id UUID
